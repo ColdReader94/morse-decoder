@@ -38,17 +38,43 @@ const MORSE_TABLE = {
 };
 
 function decode(expr) {
-let letter = [];
-   for(let i = 0; i < expr.length; i++) {
-        if(expr[i] == '.') letter.push('10');
-        if(expr[i] == '-') letter.push('11');
-   }
+    //создаем массив для значений из 10 цифр, обозначающих буквы
+        let letters = [];
 
-   for(let i = 0; letter.join('').length < 10; i++) {
-    letter.unshift('0');
+    //проходим циклом по символам переданной строки и добавляем каждые 10 символов обозначающие букву в созданный до этого массив
+        for (let pos = 0; pos < expr.length; pos += 10) {
+            letters.push(expr.substr(pos, 10));
+          }
+
+        //создаем строку для раскодированных символов     
+        let decodedLetters = "";
+
+        // Проходим циклом по каждому 10-значному значению из массива букв
+        for(let i = 0; i < letters.length; i++) {
+            //проверяем является ли это значение пробелом, если да - добавляем в строку раскодированных символов пробел
+            if (letters[i] == "**********") decodedLetters += ' ';
+            else {
+                let morseSymbols = '';
+                //если не пробел то проверяем точка или тире и также добавляем в строку
+                for(let pos = 0; pos < letters[i].length; pos += 2) {
+                    switch (letters[i].substr(pos, 2)) {
+                        case '10':
+                            morseSymbols += '.';
+                            break;
+                        case '11':
+                            morseSymbols += '-';
+                            break; 
+                        default:
+                            break;
+                    }                    
+                }
+                //Добавляем в строку раскодированных символов букву соответствующую символу азбуки Морзе
+                decodedLetters += MORSE_TABLE[morseSymbols];                
+            }    
+    }
+    return decodedLetters;
 }
-   return letter.join('');
-}
+
 
 module.exports = {
     decode
